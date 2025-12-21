@@ -65,11 +65,6 @@
                                     font-size: 20px;
                                     margin-bottom: 30px;
                                     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                                    transition: transform 0.3s ease;
-                    }
-
-                    .logo-menu:hover {
-                                    transform: scale(1.05);
                     }
 
                     .app-icons {
@@ -87,38 +82,15 @@
                                     justify-content: center;
                                     cursor: pointer;
                                     font-size: 24px;
-                                    transition: transform 0.3s ease;
                                     color: white;
                     }
 
-                    .app-icon:hover {
-                                    transform: scale(1.1);
-                    }
-
-                    .icon-email {
-                                    background-color: var(--red);
-                    }
-
-                    .icon-whatsapp {
-                                    background-color: var(--orange);
-                    }
-
-                    .icon-sms {
-                                    background-color: var(--yellow-orange);
-                    }
-
-                    .icon-calendar {
-                                    background-color: var(--orange-light);
-                    }
-
-                    .icon-tasks {
-                                    background-color: var(--yellow);
-                                    color: var(--text-dark);
-                    }
-
-                    .icon-contacts {
-                                    background-color: var(--red-orange);
-                    }
+                    .icon-email { background-color: var(--red); }
+                    .icon-whatsapp { background-color: var(--orange); }
+                    .icon-sms { background-color: var(--yellow-orange); }
+                    .icon-calendar { background-color: var(--orange-light); }
+                    .icon-tasks { background-color: var(--yellow); color: var(--text-dark); }
+                    .icon-contacts { background-color: var(--red-orange); }
 
                     /* Main Content */
                     .main-content {
@@ -151,7 +123,7 @@
                     .content-area {
                                     flex: 1;
                                     display: grid;
-                                    grid-template-columns: 1fr 1fr;
+                                    grid-template-columns: 1fr 1fr 1fr;
                                     grid-template-rows: 1fr 1fr;
                                     gap: 20px;
                                     overflow: hidden;
@@ -204,11 +176,6 @@
                                     padding: 12px;
                                     border-bottom: 1px solid var(--border);
                                     cursor: pointer;
-                                    transition: background 0.2s ease;
-                    }
-
-                    .message-item:hover, .task-item:hover, .event-item:hover {
-                                    background-color: #FAFAF8;
                     }
 
                     .message-item:last-child, .task-item:last-child, .event-item:last-child {
@@ -246,11 +213,6 @@
                                     color: var(--text-light);
                                     float: right;
                                     margin-top: -20px;
-                    }
-
-                    .checkbox {
-                                    margin-right: 10px;
-                                    cursor: pointer;
                     }
 
                     .task-text {
@@ -295,20 +257,27 @@
                     }
 
                     .window-sms {
-                                    grid-column: 1;
-                                    grid-row: 3;
+                                    grid-column: 3;
+                                    grid-row: 1 / 3;
                     }
 
                     .window-calendar {
-                                    grid-column: 2;
-                                    grid-row: 3;
+                                    grid-column: 1;
+                                    grid-row: 2;
+                                    display: none;
                     }
 
-                    /* Adjust for 3-column bottom layout */
-                    @media (min-width: 1200px) {
+                    .window-tasks {
+                                    grid-column: 2;
+                                    grid-row: 2;
+                                    display: none;
+                    }
+
+                    /* For mobile/tablet - show 2 columns at top */
+                    @media (max-width: 1200px) {
                                     .content-area {
-                                                        grid-template-columns: 1fr 1fr 1fr;
-                                                        grid-template-rows: 1fr 1fr;
+                                                        grid-template-columns: 1fr 1fr;
+                                                        grid-template-rows: 1fr 1fr 1fr;
                                     }
 
                                     .window-email {
@@ -322,32 +291,20 @@
                                     }
 
                                     .window-sms {
-                                                        grid-column: 3;
-                                                        grid-row: 1;
+                                                        grid-column: 1;
+                                                        grid-row: 3;
+                                                        display: block;
                                     }
 
                                     .window-calendar {
-                                                        grid-column: 3;
-                                                        grid-row: 2;
+                                                        grid-column: 2;
+                                                        grid-row: 3;
+                                                        display: block;
                                     }
-                    }
 
-                    /* Scrollbar styling */
-                    .window-content::-webkit-scrollbar {
-                                    width: 6px;
-                    }
-
-                    .window-content::-webkit-scrollbar-track {
-                                    background: transparent;
-                    }
-
-                    .window-content::-webkit-scrollbar-thumb {
-                                    background: var(--border);
-                                    border-radius: 3px;
-                    }
-
-                    .window-content::-webkit-scrollbar-thumb:hover {
-                                    background: var(--text-light);
+                                    .window-tasks {
+                                                        display: none;
+                                    }
                     }
 
                     /* FAB button */
@@ -366,12 +323,16 @@
                                     font-size: 28px;
                                     cursor: pointer;
                                     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                                    transition: transform 0.3s ease;
                                     z-index: 1000;
                     }
 
-                    .fab:hover {
-                                    transform: scale(1.1);
+                    .window-content::-webkit-scrollbar {
+                                    width: 6px;
+                    }
+
+                    .window-content::-webkit-scrollbar-thumb {
+                                    background: var(--border);
+                                    border-radius: 3px;
                     }
                 </style>
     </head>
@@ -396,7 +357,7 @@
                                         </div>div>
 
                                         <div class="content-area">
-                                                            <!-- Email Window -->
+                                                            <!-- Email Window - Full Left Height -->
                                                             <div class="window window-email">
                                                                                     <div class="window-header">
                                                                                                                 <div class="window-title">
@@ -424,7 +385,7 @@
                                                                                     </div>
                                                             </div>
 
-                                                            <!-- WhatsApp Window -->
+                                                            <!-- WhatsApp Window - Full Right Height -->
                                                             <div class="window window-whatsapp">
                                                                                     <div class="window-header">
                                                                                                                 <div class="window-title">
@@ -452,7 +413,7 @@
                                                                                     </div>
                                                             </div>
                                         
-                                                        <!-- SMS Window -->
+                                                        <!-- SMS Window - 1/3 Width Bottom -->
                                                         <div class="window window-sms">
                                                                             <div class="window-header">
                                                                                                     <div class="window-title">
@@ -480,7 +441,7 @@
                                                                             </div>
                                                         </div>
                                         
-                                                        <!-- Calendar Window -->
+                                                        <!-- Calendar Window - 1/3 Width Bottom -->
                                                         <div class="window window-calendar">
                                                                             <div class="window-header">
                                                                                                     <div class="window-title">
@@ -505,8 +466,8 @@
                                                                             </div>
                                                         </div>
                                         
-                                                        <!-- Tasks Window -->
-                                                        <div class="window window-calendar">
+                                                        <!-- Tasks Window - 1/3 Width Bottom -->
+                                                        <div class="window window-tasks">
                                                                             <div class="window-header">
                                                                                                     <div class="window-title">
                                                                                                                                 <span>✓</span>
