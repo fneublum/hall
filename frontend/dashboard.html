@@ -40,20 +40,37 @@
                                     width: 100vw;
                     }
 
-                    /* Sidebar */
-                    .sidebar {
-                                    width: 80px;
-                                    background: linear-gradient(180deg, var(--red-dark) 0%, var(--red) 50%, var(--orange) 100%);
+                    /* Main Content - Full Width */
+                    .main-content {
+                                    flex: 1;
                                     display: flex;
                                     flex-direction: column;
-                                    align-items: center;
-                                    padding: 20px 0;
-                                    box-shadow: 2px 0 8px rgba(0,0,0,0.1);
+                                    padding: 20px;
+                                    gap: 20px;
+                                    width: 100%;
                     }
 
+                    .header {
+                                    background: white;
+                                    padding: 20px;
+                                    border-radius: 12px;
+                                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: space-between;
+                    }
+
+                    .header-left {
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 30px;
+                                    flex: 1;
+                    }
+
+                    /* Circular HALL Menu */
                     .logo-menu {
-                                    width: 60px;
-                                    height: 60px;
+                                    width: 70px;
+                                    height: 70px;
                                     border-radius: 50%;
                                     background: linear-gradient(135deg, var(--yellow-orange) 0%, var(--red-orange) 50%, var(--red-dark) 100%);
                                     display: flex;
@@ -62,50 +79,13 @@
                                     cursor: pointer;
                                     font-weight: 700;
                                     color: white;
-                                    font-size: 20px;
-                                    margin-bottom: 30px;
+                                    font-size: 18px;
                                     box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+                                    flex-shrink: 0;
                     }
 
-                    .app-icons {
-                                    display: flex;
-                                    flex-direction: column;
-                                    gap: 20px;
-                    }
-
-                    .app-icon {
-                                    width: 50px;
-                                    height: 50px;
-                                    border-radius: 12px;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    cursor: pointer;
-                                    font-size: 24px;
-                                    color: white;
-                    }
-
-                    .icon-email { background-color: var(--red); }
-                    .icon-whatsapp { background-color: var(--orange); }
-                    .icon-sms { background-color: var(--yellow-orange); }
-                    .icon-calendar { background-color: var(--orange-light); }
-                    .icon-tasks { background-color: var(--yellow); color: var(--text-dark); }
-                    .icon-contacts { background-color: var(--red-orange); }
-
-                    /* Main Content */
-                    .main-content {
+                    .greeting-section {
                                     flex: 1;
-                                    display: flex;
-                                    flex-direction: column;
-                                    padding: 20px;
-                                    gap: 20px;
-                    }
-
-                    .header {
-                                    background: white;
-                                    padding: 20px;
-                                    border-radius: 12px;
-                                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                     }
 
                     .greeting {
@@ -120,11 +100,25 @@
                                     color: var(--text-light);
                     }
 
+                    .search-bar {
+                                    background: white;
+                                    padding: 10px 16px;
+                                    border-radius: 20px;
+                                    border: 1px solid var(--border);
+                                    font-size: 13px;
+                                    color: var(--text-light);
+                                    min-width: 200px;
+                    }
+
                     .content-area {
                                     flex: 1;
                                     display: grid;
-grid-template-columns: 1fr 1fr 1fr;grid-template-rows: 1fr auto;                                    overflow: hidden;
-grid-template-rows: 1fr 1fr;
+                                    grid-template-columns: 1fr 1fr;
+                                    grid-template-rows: 1fr 1fr;
+                                    gap: 20px;
+                                    overflow: hidden;
+                    }
+
                     .window {
                                     background: white;
                                     border-radius: 12px;
@@ -253,51 +247,17 @@ grid-template-rows: 1fr 1fr;
                     }
 
                     .window-sms {
-grid-column: 1;                                    grid-row: 1 / 3;
-grid-row: 2;
-                    .window-calendar {
                                     grid-column: 1;
-                                    grid-row: 2;
-grid-column: 2;                    }
-
-                    
-                                    grid-column: 2;
-                                    grid-row: 2;
-                                    display: none;
+                                    grid-row: 3;
                     }
 
-                    /* For mobile/tablet - show 2 columns at top */
-                    @media (max-width: 1200px) {
-                                    .content-area {
-                                                        grid-template-columns: 1fr 1fr;
-                                                        grid-template-rows: 1fr 1fr 1fr;
-                                    }
+                    .window-calendar {
+                                    grid-column: 2;
+                                    grid-row: 3;
+                    }
 
-                                    .window-email {
-                                                        grid-column: 1;
-                                                        grid-row: 1 / 3;
-                                    }
-
-                                    .window-whatsapp {
-                                                        grid-column: 2;
-                                                        grid-row: 1 / 3;
-                                    }
-
-                                    .window-sms {
-                                                        grid-column: 1;
-                                                        grid-row: 3;
-                                                        display: block;
-                                    }
-
-                                    .window-calendar {
-                                                        grid-column: 2;
-                                                        grid-row: 3;
-                                                        display: block;
-                                    }
-
-                                    .window-tasks {
-                                                        display: none;
-                                    }
+                    .window-tasks {
+                                    display: none;
                     }
 
                     /* FAB button */
@@ -331,26 +291,20 @@ grid-column: 2;                    }
     </head>
     <body>
             <div class="container">
-                        <div class="sidebar">
-                                        <div class="logo-menu" title="HALL Menu">HALL</div>div>
-                                        <div class="app-icons">
-                                                            <div class="app-icon icon-email" title="Email">✉️</div>div>
-                                                            <div class="app-icon icon-whatsapp" title="WhatsApp">💬</div>div>
-                                                            <div class="app-icon icon-sms" title="SMS">📱</div>div>
-                                                            <div class="app-icon icon-calendar" title="Calendar">📅</div>div>
-                                                            <div class="app-icon icon-tasks" title="Tasks">✓</div>div>
-                                                            <div class="app-icon icon-contacts" title="Contacts">👤</div>div>
-                                        </div>div>
-                        </div>div>
-
                         <div class="main-content">
                                         <div class="header">
-                                                            <div class="greeting">Good morning, John</div>div>
-                                                            <div class="subtitle">5 unread messages • 2 events today</div>div>
+                                                            <div class="header-left">
+                                                                                    <div class="logo-menu" title="HALL Menu">HALL</div>div>
+                                                                                    <div class="greeting-section">
+                                                                                                                <div class="greeting">Good morning, John</div>div>
+                                                                                                                <div class="subtitle">5 unread messages • 2 events today</div>div>
+                                                                                        </div>div>
+                                                            </div>div>
+                                                            <input type="text" class="search-bar" placeholder="Search contacts...">
                                         </div>div>
 
                                         <div class="content-area">
-                                                            <!-- Email Window - Full Left Height -->
+                                                            <!-- Email Window -->
                                                             <div class="window window-email">
                                                                                     <div class="window-header">
                                                                                                                 <div class="window-title">
@@ -378,7 +332,7 @@ grid-column: 2;                    }
                                                                                     </div>
                                                             </div>
 
-                                                            <!-- WhatsApp Window - Full Right Height -->
+                                                            <!-- WhatsApp Window -->
                                                             <div class="window window-whatsapp">
                                                                                     <div class="window-header">
                                                                                                                 <div class="window-title">
@@ -406,7 +360,7 @@ grid-column: 2;                    }
                                                                                     </div>
                                                             </div>
                                         
-                                                        <!-- SMS Window - 1/3 Width Bottom -->
+                                                        <!-- SMS Window -->
                                                         <div class="window window-sms">
                                                                             <div class="window-header">
                                                                                                     <div class="window-title">
@@ -434,7 +388,7 @@ grid-column: 2;                    }
                                                                             </div>
                                                         </div>
                                         
-                                                        <!-- Calendar Window - 1/3 Width Bottom -->
+                                                        <!-- Calendar Window -->
                                                         <div class="window window-calendar">
                                                                             <div class="window-header">
                                                                                                     <div class="window-title">
@@ -455,39 +409,6 @@ grid-column: 2;                    }
                                                                                                     <div class="event-item">
                                                                                                                                 <div class="event-time">Tomorrow 10:00 AM</div>
                                                                                                                                 <div class="event-title">Design Review</div>
-                                                                                                        </div>
-                                                                            </div>
-                                                        </div>
-                                        
-                                                        <!-- Tasks Window - 1/3 Width Bottom -->
-                                                        <div class="window window-tasks">
-                                                                            <div class="window-header">
-                                                                                                    <div class="window-title">
-                                                                                                                                <span>✓</span>
-                                                                                                                                <span>Tasks</span>
-                                                                                                        </div>
-                                                                                                    <div class="window-badge">8</div>
-                                                                            </div>
-                                                                            <div class="window-content">
-                                                                                                    <div class="task-item">
-                                                                                                                                <input type="checkbox" class="checkbox">
-                                                                                                                                <span class="task-text">Review design mockups</span>
-                                                                                                                                <div class="task-date">Today</div>
-                                                                                                        </div>
-                                                                                                    <div class="task-item">
-                                                                                                                                <input type="checkbox" class="checkbox">
-                                                                                                                                <span class="task-text">Send invoice to client</span>
-                                                                                                                                <div class="task-date">Today</div>
-                                                                                                        </div>
-                                                                                                    <div class="task-item">
-                                                                                                                                <input type="checkbox" class="checkbox">
-                                                                                                                                <span class="task-text">Prepare Q4 presentation</span>
-                                                                                                                                <div class="task-date">Tomorrow</div>
-                                                                                                        </div>
-                                                                                                    <div class="task-item">
-                                                                                                                                <input type="checkbox" class="checkbox" checked>
-                                                                                                                                <span class="task-text task-completed">Book flight tickets</span>
-                                                                                                                                <div class="task-date">Done</div>
                                                                                                         </div>
                                                                             </div>
                                                         </div>
