@@ -14,413 +14,281 @@
                                     --orange-light: #FF9800;
                                     --yellow-orange: #FFA726;
                                     --yellow: #FFB300;
-                                    --bg-light: #FAFAF8;
-                                    --bg-white: #FFFFFF;
+                                    --bg-light: #FFF8F0;
                                     --text-dark: #212121;
                                     --text-light: #757575;
                                     --border: #E0E0E0;
                     }
-
-                    * {
-                                    margin: 0;
-                                    padding: 0;
-                                    box-sizing: border-box;
-                    }
-
+                    * { margin: 0; padding: 0; box-sizing: border-box; }
                     body {
                                     font-family: 'Outfit', sans-serif;
                                     background-color: var(--bg-light);
                                     color: var(--text-dark);
-                                    overflow: hidden;
+                                    min-height: 100vh;
                     }
-
-                    .container {
-                                    display: flex;
-                                    height: 100vh;
-                                    width: 100vw;
-                    }
-
-                    /* Main Content - Full Width */
-                    .main-content {
-                                    flex: 1;
+                    .dashboard {
                                     display: flex;
                                     flex-direction: column;
+                                    height: 100vh;
                                     padding: 20px;
                                     gap: 20px;
-                                    width: 100%;
                     }
-
+                    /* Header with Circular Menu */
                     .header {
-                                    background: white;
-                                    padding: 20px;
-                                    border-radius: 12px;
-                                    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
                                     display: flex;
                                     align-items: center;
-                                    justify-content: space-between;
+                                    gap: 20px;
                     }
-
-                    .header-left {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 30px;
-                                    flex: 1;
-                    }
-
                     /* Circular HALL Menu */
-                    .logo-menu {
-                                    width: 70px;
-                                    height: 70px;
+                    .hall-menu-container {
+                                    position: relative;
+                    }
+                    .hall-menu {
+                                    width: 80px;
+                                    height: 80px;
                                     border-radius: 50%;
-                                    background: linear-gradient(135deg, var(--yellow-orange) 0%, var(--red-orange) 50%, var(--red-dark) 100%);
+                                    background: conic-gradient(from 0deg, var(--yellow) 0deg, var(--yellow-orange) 60deg, var(--orange) 120deg, var(--red-orange) 180deg, var(--red) 240deg, var(--red-dark) 300deg, var(--yellow) 360deg);
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
                                     cursor: pointer;
+                                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                                    position: relative;
+                                    z-index: 100;
+                    }
+                    .hall-menu-inner {
+                                    width: 50px;
+                                    height: 50px;
+                                    border-radius: 50%;
+                                    background: linear-gradient(135deg, var(--orange) 0%, var(--red-orange) 100%);
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
                                     font-weight: 700;
                                     color: white;
-                                    font-size: 18px;
-                                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                                    flex-shrink: 0;
+                                    font-size: 14px;
                     }
-
-                    .greeting-section {
+                    /* Radial Menu Items */
+                    .menu-items {
+                                    position: absolute;
+                                    top: 50%;
+                                    left: 50%;
+                                    transform: translate(-50%, -50%);
+                                    pointer-events: none;
+                                    opacity: 0;
+                                    transition: opacity 0.3s;
+                    }
+                    .hall-menu-container:hover .menu-items,
+                    .hall-menu-container.active .menu-items {
+                                    opacity: 1;
+                                    pointer-events: auto;
+                    }
+                    .menu-item {
+                                    position: absolute;
+                                    width: 45px;
+                                    height: 45px;
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    font-size: 20px;
+                                    cursor: pointer;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+                                    transition: transform 0.2s;
+                    }
+                    .menu-item:hover { transform: scale(1.15); }
+                    .menu-item.email { background: var(--red); top: -60px; left: -22px; }
+                    .menu-item.whatsapp { background: var(--orange); top: -30px; left: 40px; }
+                    .menu-item.sms { background: var(--yellow-orange); top: 30px; left: 40px; }
+                    .menu-item.calendar { background: var(--orange-light); top: 60px; left: -22px; }
+                    .menu-item.tasks { background: var(--yellow); top: 30px; left: -85px; color: #333; }
+                    .menu-item.contacts { background: var(--red-orange); top: -30px; left: -85px; }
+                    .greeting {
                                     flex: 1;
                     }
-
-                    .greeting {
-                                    font-size: 24px;
+                    .greeting h1 {
+                                    font-size: 26px;
                                     font-weight: 600;
-                                    color: var(--text-dark);
-                                    margin-bottom: 5px;
+                                    margin-bottom: 4px;
                     }
-
-                    .subtitle {
-                                    font-size: 13px;
+                    .greeting p {
+                                    font-size: 14px;
                                     color: var(--text-light);
                     }
-
-                    .search-bar {
-                                    background: white;
-                                    padding: 10px 16px;
-                                    border-radius: 20px;
+                    .search-box {
+                                    padding: 12px 20px;
+                                    border-radius: 25px;
                                     border: 1px solid var(--border);
-                                    font-size: 13px;
-                                    color: var(--text-light);
-                                    min-width: 200px;
+                                    background: white;
+                                    font-size: 14px;
+                                    width: 220px;
                     }
-
-                    .content-area {
+                    /* Content Grid - Email/WhatsApp full height, SMS/Calendar/Tasks at bottom */
+                    .content {
                                     flex: 1;
                                     display: grid;
                                     grid-template-columns: 1fr 1fr;
-                                    grid-template-rows: 1fr 1fr;
+                                    grid-template-rows: 2fr 1fr;
                                     gap: 20px;
-                                    overflow: hidden;
+                                    min-height: 0;
                     }
-
                     .window {
                                     background: white;
-                                    border-radius: 12px;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                                    border-radius: 16px;
+                                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
                                     display: flex;
                                     flex-direction: column;
                                     overflow: hidden;
                     }
-
                     .window-header {
-                                    padding: 16px;
+                                    padding: 16px 20px;
                                     border-bottom: 1px solid var(--border);
                                     display: flex;
                                     align-items: center;
                                     justify-content: space-between;
-                                    min-height: 56px;
                     }
-
                     .window-title {
                                     display: flex;
                                     align-items: center;
                                     gap: 10px;
                                     font-weight: 600;
-                                    font-size: 14px;
+                                    font-size: 15px;
                     }
-
-                    .window-badge {
-                                    background-color: var(--red);
+                    .window-title span:first-child { font-size: 20px; }
+                    .badge {
+                                    background: var(--orange);
                                     color: white;
-                                    font-size: 11px;
+                                    font-size: 12px;
                                     font-weight: 600;
-                                    padding: 4px 8px;
-                                    border-radius: 20px;
-                                    min-width: 24px;
-                                    text-align: center;
+                                    padding: 4px 10px;
+                                    border-radius: 12px;
                     }
-
                     .window-content {
                                     flex: 1;
                                     overflow-y: auto;
-                                    padding: 12px;
+                                    padding: 8px;
                     }
-
-                    .message-item, .task-item, .event-item {
+                    .item {
+                                    display: flex;
+                                    align-items: center;
                                     padding: 12px;
-                                    border-bottom: 1px solid var(--border);
+                                    border-radius: 10px;
                                     cursor: pointer;
                     }
-
-                    .message-item:last-child, .task-item:last-child, .event-item:last-child {
-                                    border-bottom: none;
-                    }
-
-                    .sender-avatar {
-                                    width: 32px;
-                                    height: 32px;
+                    .item:hover { background: var(--bg-light); }
+                    .avatar {
+                                    width: 40px;
+                                    height: 40px;
                                     border-radius: 50%;
-                                    display: inline-flex;
+                                    display: flex;
                                     align-items: center;
                                     justify-content: center;
                                     color: white;
                                     font-weight: 600;
-                                    font-size: 12px;
-                                    margin-right: 10px;
-                                    vertical-align: middle;
+                                    font-size: 14px;
+                                    margin-right: 12px;
+                                    flex-shrink: 0;
                     }
-
-                    .sender-name {
-                                    font-weight: 500;
-                                    font-size: 13px;
-                                    color: var(--text-dark);
-                    }
-
-                    .message-text {
-                                    font-size: 12px;
-                                    color: var(--text-light);
-                                    margin-top: 4px;
-                    }
-
-                    .time-badge {
-                                    font-size: 11px;
-                                    color: var(--text-light);
-                                    float: right;
-                                    margin-top: -20px;
-                    }
-
-                    .task-text {
-                                    font-size: 13px;
-                                    color: var(--text-dark);
-                                    display: inline;
-                    }
-
-                    .task-date {
-                                    font-size: 11px;
-                                    color: var(--text-light);
-                                    float: right;
-                    }
-
-                    .task-completed {
-                                    opacity: 0.6;
-                                    text-decoration: line-through;
-                    }
-
-                    .event-time {
-                                    font-weight: 600;
-                                    font-size: 12px;
-                                    color: var(--red);
-                                    margin-bottom: 3px;
-                    }
-
-                    .event-title {
-                                    font-weight: 500;
-                                    font-size: 13px;
-                                    color: var(--text-dark);
-                    }
-
-                    /* Grid positioning */
-                    .window-email {
-                                    grid-column: 1;
-                                    grid-row: 1 / 3;
-                    }
-
-                    .window-whatsapp {
-                                    grid-column: 2;
-                                    grid-row: 1 / 3;
-                    }
-
-                    .window-sms {
-                                    grid-column: 1;
-                                    grid-row: 3;
-                    }
-
-                    .window-calendar {
-                                    grid-column: 2;
-                                    grid-row: 3;
-                    }
-
-                    .window-tasks {
-                                    display: none;
-                    }
-
-                    /* FAB button */
+                    .item-info { flex: 1; min-width: 0; }
+                    .item-name { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
+                    .item-text { font-size: 13px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+                    .item-time { font-size: 12px; color: var(--text-light); margin-left: 10px; }
+                    .event-time { font-weight: 600; font-size: 13px; color: var(--red); }
+                    .event-title { font-size: 14px; margin-top: 2px; }
+                    /* Grid Positions */
+                    .email-window { grid-row: 1 / 3; }
+                    .whatsapp-window { grid-row: 1 / 3; }
+                    .sms-window { grid-column: 1; }
+                    .calendar-window { grid-column: 2; }
+                    /* FAB */
                     .fab {
                                     position: fixed;
-                                    bottom: 30px;
-                                    right: 30px;
+                                    bottom: 25px;
+                                    right: 25px;
                                     width: 56px;
                                     height: 56px;
                                     border-radius: 50%;
-                                    background: linear-gradient(135deg, var(--red-orange) 0%, var(--orange) 100%);
+                                    background: linear-gradient(135deg, var(--red-orange), var(--orange));
                                     color: white;
                                     display: flex;
                                     align-items: center;
                                     justify-content: center;
                                     font-size: 28px;
                                     cursor: pointer;
-                                    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                                    z-index: 1000;
-                    }
-
-                    .window-content::-webkit-scrollbar {
-                                    width: 6px;
-                    }
-
-                    .window-content::-webkit-scrollbar-thumb {
-                                    background: var(--border);
-                                    border-radius: 3px;
+                                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
                     }
                 </style>
     </head>
     <body>
-            <div class="container">
-                        <div class="main-content">
-                                        <div class="header">
-                                                            <div class="header-left">
-                                                                                    <div class="logo-menu" title="HALL Menu">HALL</div>div>
-                                                                                    <div class="greeting-section">
-                                                                                                                <div class="greeting">Good morning, John</div>div>
-                                                                                                                <div class="subtitle">5 unread messages • 2 events today</div>div>
-                                                                                        </div>div>
+            <div class="dashboard">
+                        <div class="header">
+                                        <div class="hall-menu-container">
+                                                            <div class="hall-menu">
+                                                                                    <div class="hall-menu-inner">HALL</div>div>
                                                             </div>div>
-                                                            <input type="text" class="search-bar" placeholder="Search contacts...">
+                                                            <div class="menu-items">
+                                                                                    <div class="menu-item email">✉️</div>div>
+                                                                                    <div class="menu-item whatsapp">💬</div>div>
+                                                                                    <div class="menu-item sms">📱</div>div>
+                                                                                    <div class="menu-item calendar">📅</div>div>
+                                                                                    <div class="menu-item tasks">✓</div>div>
+                                                                                    <div class="menu-item contacts">👤</div>div>
+                                                            </div>div>
                                         </div>div>
-
-                                        <div class="content-area">
-                                                            <!-- Email Window -->
-                                                            <div class="window window-email">
-                                                                                    <div class="window-header">
-                                                                                                                <div class="window-title">
-                                                                                                                                                <span>✉️</span>
-                                                                                                                                            <span>Email</span>
-                                                                                                                    </div>div>
-                                                                                                            <div class="window-badge">12</div>div>
-                                                                                        </div>div>
-                                                                                <div class="window-content">
-                                                                                                        <div class="message-item">
-                                                                                                                                    <div><span class="sender-avatar" style="background-color: var(--orange);">SM</span>span><span class="sender-name">Sarah Miller</span>span></div>
-                                                                                                                                    <div class="message-text">Re: Project update for Q4</div>
-                                                                                                                                    <div class="time-badge">2m</div>
-                                                                                                            </div>
-                                                                                                        <div class="message-item">
-                                                                                                                                        <div><span class="sender-avatar" style="background-color: var(--red);">JW</span>span><span class="sender-name">James Wilson</span>span></div>
-                                                                                                                                    <div class="message-text">Meeting reschedule request</div>
-                                                                                                                                    <div class="time-badge">1h</div>
-                                                                                                            </div>
-                                                                                                        <div class="message-item">
-                                                                                                                                        <div><span class="sender-avatar" style="background-color: var(--yellow-orange);">AM</span>span><span class="sender-name">Amazon</span>span></div>
-                                                                                                                                        <div class="message-text">Your order has shipped!</div>
-                                                                                                                                        <div class="time-badge">3h</div>
-                                                                                                            </div>
-                                                                                    </div>
-                                                            </div>
-
-                                                            <!-- WhatsApp Window -->
-                                                            <div class="window window-whatsapp">
-                                                                                    <div class="window-header">
-                                                                                                                <div class="window-title">
-                                                                                                                                                <span>💬</span>
-                                                                                                                                            <span>WhatsApp</span>
-                                                                                                                    </div>
-                                                                                                            <div class="window-badge">5</div>
-                                                                                        </div>
-                                                                                <div class="window-content">
-                                                                                                        <div class="message-item">
-                                                                                                                                    <div><span class="sender-avatar" style="background-color: var(--orange);">TG</span><span class="sender-name">Team Group</span></div>
-                                                                                                                                    <div class="message-text">Mike: See you at the meeting!</div>
-                                                                                                                                    <div class="time-badge">15m</div>
-                                                                                                            </div>
-                                                                                                        <div class="message-item">
-                                                                                                                                    <div><span class="sender-avatar" style="background-color: var(--red);">MJ</span><span class="sender-name">Mom</span></div>
-                                                                                                                                    <div class="message-text">Don't forget dinner on Sunday</div>
-                                                                                                                                    <div class="time-badge">2h</div>
-                                                                                                            </div>
-                                                                                                        <div class="message-item">
-                                                                                                                                    <div><span class="sender-avatar" style="background-color: var(--yellow-orange);">DR</span><span class="sender-name">David R.</span></div>
-                                                                                                                                    <div class="message-text">Thanks for the files!</div>
-                                                                                                                                    <div class="time-badge">1d</div>
-                                                                                                            </div>
-                                                                                    </div>
-                                                            </div>
-                                        
-                                                        <!-- SMS Window -->
-                                                        <div class="window window-sms">
-                                                                            <div class="window-header">
-                                                                                                    <div class="window-title">
-                                                                                                                                <span>📱</span>
-                                                                                                                                <span>SMS</span>
-                                                                                                        </div>
-                                                                                                    <div class="window-badge">3</div>
-                                                                            </div>
-                                                                            <div class="window-content">
-                                                                                                    <div class="message-item">
-                                                                                                                                <div><span class="sender-avatar" style="background-color: var(--red);">BK</span><span class="sender-name">Bank Alert</span></div>
-                                                                                                                                <div class="message-text">Transaction of $125.00 completed</div>
-                                                                                                                                <div class="time-badge">30m</div>
-                                                                                                        </div>
-                                                                                                    <div class="message-item">
-                                                                                                                                <div><span class="sender-avatar" style="background-color: var(--orange);">FD</span><span class="sender-name">FedEx</span></div>
-                                                                                                                                <div class="message-text">Your package is out for delivery</div>
-                                                                                                                                <div class="time-badge">2h</div>
-                                                                                                        </div>
-                                                                                                    <div class="message-item">
-                                                                                                                                <div><span class="sender-avatar" style="background-color: var(--yellow-orange);">DR</span><span class="sender-name">Dr. Smith Office</span></div>
-                                                                                                                                <div class="message-text">Appointment reminder for tomorrow</div>
-                                                                                                                                <div class="time-badge">5h</div>
-                                                                                                        </div>
-                                                                            </div>
-                                                        </div>
-                                        
-                                                        <!-- Calendar Window -->
-                                                        <div class="window window-calendar">
-                                                                            <div class="window-header">
-                                                                                                    <div class="window-title">
-                                                                                                                                <span>📅</span>
-                                                                                                                                <span>Calendar</span>
-                                                                                                        </div>
-                                                                                                    <div class="window-badge">2 today</div>
-                                                                            </div>
-                                                                            <div class="window-content">
-                                                                                                    <div class="event-item">
-                                                                                                                                <div class="event-time">9:00 AM - 9:30 AM</div>
-                                                                                                                                <div class="event-title">Team Standup</div>
-                                                                                                        </div>
-                                                                                                    <div class="event-item">
-                                                                                                                                <div class="event-time">2:00 PM - 3:00 PM</div>
-                                                                                                                                <div class="event-title">Client Call - Q4 Review</div>
-                                                                                                        </div>
-                                                                                                    <div class="event-item">
-                                                                                                                                <div class="event-time">Tomorrow 10:00 AM</div>
-                                                                                                                                <div class="event-title">Design Review</div>
-                                                                                                        </div>
-                                                                            </div>
-                                                        </div>
-                                        </div>
-                        </div>
-            
-                    <div class="fab">+</div>
-            </div>
+                                        <div class="greeting">
+                                                            <h1>Good morning, John</h1>
+                                                        <p>5 unread messages • 2 events today</p>
+                                        </div>div>
+                                    <input type="text" class="search-box" placeholder="🔍 Search contacts...">
+                        </div>div>
+                    <div class="content">
+                                <div class="window email-window">
+                                                <div class="window-header">
+                                                                    <div class="window-title"><span>✉️</span><span>Email</span></div>div>
+                                                                    <div class="badge">12</div>div>
+                                                </div>div>
+                                                <div class="window-content">
+                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">SM</div>div><div class="item-info"><div class="item-name">Sarah Miller</div>div><div class="item-text">Re: Project update for Q4</div>div></div>div><div class="item-time">2m</div>div></div>div>
+                                                                    <div class="item"><div class="avatar" style="background:var(--red)">JW</div>div><div class="item-info"><div class="item-name">James Wilson</div>div><div class="item-text">Meeting reschedule request</div>div></div>div><div class="item-time">1h</div>div></div>div>
+                                                                    <div class="item"><div class="avatar" style="background:var(--yellow-orange)">AM</div>div><div class="item-info"><div class="item-name">Amazon</div>div><div class="item-text">Your order has shipped!</div>div></div>div><div class="item-time">3h</div>div></div>div>
+                                                </div>div>
+                                </div>div>
+                                <div class="window whatsapp-window">
+                                                <div class="window-header">
+                                                                    <div class="window-title"><span>💬</span><span>WhatsApp</span></div>div>
+                                                                    <div class="badge">5</div>div>
+                                                </div>div>
+                                                <div class="window-content">
+                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">TG</div>div><div class="item-info"><div class="item-name">Team Group</div>div><div class="item-text">Mike: See you at the meeting!</div>div></div>div><div class="item-time">15m</div>div></div>div>
+                                                                    <div class="item"><div class="avatar" style="background:var(--red)">MJ</div>div><div class="item-info"><div class="item-name">Mom</div>div><div class="item-text">Don't forget dinner on Sunday</div>div></div>div><div class="item-time">2h</div>div></div>div>
+                                                                    <div class="item"><div class="avatar" style="background:var(--yellow-orange)">DR</div>div><div class="item-info"><div class="item-name">David R.</div>div><div class="item-text">Thanks for the files!</div>div></div>div><div class="item-time">1d</div>div></div>div>
+                                                </div>div>
+                                </div>div>
+                                <div class="window sms-window">
+                                                <div class="window-header">
+                                                                    <div class="window-title"><span>📱</span><span>SMS</span></div>div>
+                                                                    <div class="badge">3</div>div>
+                                                </div>div>
+                                                <div class="window-content">
+                                                                    <div class="item"><div class="avatar" style="background:var(--red)">BK</div>div><div class="item-info"><div class="item-name">Bank Alert</div>div><div class="item-text">Transaction completed</div>div></div>div><div class="item-time">30m</div>div></div>div>
+                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">FD</div>div><div class="item-info"><div class="item-name">FedEx</div>div><div class="item-text">Package out for delivery</div>div></div>div><div class="item-time">2h</div>div></div>div>
+                                                </div>div>
+                                </div>div>
+                                <div class="window calendar-window">
+                                                <div class="window-header">
+                                                                    <div class="window-title"><span>📅</span><span>Calendar</span></div>div>
+                                                                    <div class="badge">2 today</div>div>
+                                                </div>div>
+                                                <div class="window-content">
+                                                                    <div class="item"><div class="item-info"><div class="event-time">9:00 AM</div>div><div class="event-title">Team Standup</div>div></div>div></div>div>
+                                                                    <div class="item"><div class="item-info"><div class="event-time">2:00 PM</div>div><div class="event-title">Client Call - Q4 Review</div>div></div>div></div>div>
+                                                </div>div>
+                                </div>div>
+                    </div>div>
+            </div>div>
+        <div class="fab">+</div>div>
     </body>
-</html>html></span></span>
-                                                                                                        </div>
-                                                                                                        </div></span></span>
+</html>html></span></span></p></h1>
     </body>
         </style></title>
     </head>
