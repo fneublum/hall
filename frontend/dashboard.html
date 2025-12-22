@@ -1,291 +1,1079 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-            <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>HALL - Dashboard</title>
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-        <style>
-                    :root {
-                                    --red-dark: #B71C1C;
-                                    --red: #D32F2F;
-                                    --red-orange: #E64A19;
-                                    --orange: #F57C00;
-                                    --orange-light: #FF9800;
-                                    --yellow-orange: #FFA726;
-                                    --yellow: #FFB300;
-                                    --bg-light: #FFF8F0;
-                                    --text-dark: #212121;
-                                    --text-light: #757575;
-                                    --border: #E0E0E0;
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HALL - Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Righteous&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --red-dark: #B71C1C;
+            --red: #D32F2F;
+            --red-orange: #E64A19;
+            --orange: #F57C00;
+            --orange-light: #FF9800;
+            --yellow-orange: #FFA726;
+            --yellow: #FFB300;
+            --bg: #FFF8F0;
+            --bar-bg: #1a1a1a;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Top Bar - Bookmark Style */
+        .top-bar {
+            height: 50px;
+            background: var(--bar-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            flex-shrink: 0;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* HALL Interactive Wheel */
+        .hall-logo-container {
+            position: relative;
+            margin-right: 12px;
+        }
+
+        .hall-wheel {
+            width: 44px;
+            height: 44px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .hall-wheel svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+
+        .hall-wheel .segment {
+            cursor: pointer;
+            transition: opacity 0.2s, filter 0.2s;
+            transform-origin: center;
+        }
+
+        .hall-wheel .segment:hover {
+            opacity: 0.85;
+            filter: brightness(1.15);
+        }
+
+        .hall-wheel .segment.inactive {
+            opacity: 0.3;
+            filter: grayscale(0.5);
+        }
+
+        .hall-wheel .center-circle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Righteous', cursive;
+            font-size: 0.28rem;
+            color: var(--red-orange);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .hall-wheel .ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--red);
+            border-right-color: var(--orange);
+            border-bottom-color: var(--yellow);
+            border-left-color: var(--red-orange);
+            animation: spin 8s linear infinite;
+            pointer-events: none;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* App Menu Items */
+        .app-menu {
+            display: flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .menu-item.active {
+            border-color: #4CAF50;
+            background: rgba(76, 175, 80, 0.2);
+        }
+
+        .menu-item.inactive {
+            border-color: #f44336;
+            background: rgba(244, 67, 54, 0.15);
+            opacity: 0.7;
+        }
+
+        .menu-item.inactive:hover {
+            opacity: 1;
+        }
+
+        .menu-item svg {
+            width: 18px;
+            height: 18px;
+            fill: #888;
+        }
+
+        .menu-item.active svg {
+            fill: white;
+        }
+
+        .menu-item.inactive svg {
+            fill: #f44336;
+        }
+
+        .menu-item span {
+            font-size: 0.8rem;
+            color: #888;
+            font-weight: 500;
+        }
+
+        .menu-item.active span {
+            color: white;
+        }
+
+        .menu-item.inactive span {
+            color: #f44336;
+        }
+
+        .menu-item.dashboard.active {
+            border-color: transparent;
+            background: rgba(255,255,255,0.15);
+        }
+        .menu-item.dashboard.active svg { fill: white; }
+        .menu-item.email.active svg { fill: var(--red); }
+        .menu-item.whatsapp.active svg { fill: var(--red-orange); }
+        .menu-item.sms.active svg { fill: var(--orange); }
+        .menu-item.calendar.active svg { fill: var(--orange-light); }
+        .menu-item.tasks.active svg { fill: var(--yellow-orange); }
+        .menu-item.contacts.active svg { fill: var(--yellow); }
+
+        .menu-item .badge {
+            background: var(--red-orange);
+            color: white;
+            font-size: 0.6rem;
+            padding: 1px 5px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .menu-item.inactive .badge {
+            background: #666;
+        }
+
+        /* Accounts Section */
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .accounts {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .account-btn-all {
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: 2px solid #555;
+            background: transparent;
+            color: #888;
+            font-family: inherit;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .account-btn-all:hover {
+            border-color: #888;
+            color: white;
+        }
+
+        .account-btn-all.active {
+            border-color: #4CAF50;
+            background: #4CAF50;
+            color: white;
+        }
+
+        .account {
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            border: 2px solid;
+            transition: all 0.2s;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .account.active {
+            border-color: #4CAF50;
+            background: linear-gradient(135deg, #4CAF50, #66BB6A);
+        }
+
+        .account.inactive {
+            border-color: #f44336;
+            background: linear-gradient(135deg, #f44336, #ef5350);
+            opacity: 0.7;
+        }
+
+        .account.inactive:hover {
+            opacity: 1;
+        }
+
+        .add-account {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            border: 2px dashed #555;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s;
+        }
+
+        .add-account:hover {
+            border-color: #888;
+        }
+
+        .add-account svg {
+            width: 16px;
+            height: 16px;
+            fill: #555;
+        }
+
+        .add-account:hover svg {
+            fill: #888;
+        }
+
+        .settings-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .settings-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #666;
+            transition: transform 0.3s;
+        }
+
+        .settings-btn:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .settings-btn:hover svg {
+            fill: #aaa;
+            transform: rotate(45deg);
+        }
+
+        /* Main Content */
+        .main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 12px;
+            gap: 12px;
+        }
+
+        /* Content Area (views go here) */
+        .content-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        /* Windows */
+        .window {
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+
+        .window-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .window-header .icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .window-header .icon svg {
+            width: 16px;
+            height: 16px;
+            fill: white;
+        }
+
+        .window-header h3 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            flex: 1;
+        }
+
+        .window-header .badge {
+            background: var(--red-orange);
+            color: white;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        .window-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        /* Color per window */
+        .window.email .icon { background: var(--red); }
+        .window.whatsapp .icon { background: var(--red-orange); }
+        .window.sms .icon { background: var(--orange); }
+        .window.calendar .icon { background: var(--orange-light); }
+        .window.tasks .icon { background: var(--yellow-orange); }
+
+        /* List Items */
+        .list-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-bottom: 2px;
+        }
+
+        .list-item:hover { background: #f9f9f9; }
+
+        .list-item .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange), var(--red-orange));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.75rem;
+            flex-shrink: 0;
+        }
+
+        .list-item .content { flex: 1; min-width: 0; }
+        .list-item .title { font-weight: 500; font-size: 0.85rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-item .subtitle { font-size: 0.75rem; color: #888; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .list-item .meta { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+        .list-item .time { font-size: 0.65rem; color: #999; }
+        .list-item .unread { width: 8px; height: 8px; background: var(--red-orange); border-radius: 50%; }
+
+        /* Calendar Event */
+        .event {
+            padding: 10px;
+            border-left: 3px solid var(--orange);
+            background: #fffaf5;
+            border-radius: 0 8px 8px 0;
+            margin-bottom: 8px;
+        }
+
+        .event .time { font-size: 0.7rem; color: var(--orange); font-weight: 600; }
+        .event .title { font-size: 0.8rem; font-weight: 500; }
+
+        /* Task */
+        .task {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 8px;
+        }
+
+        .task:hover { background: #f9f9f9; }
+
+        .task input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            accent-color: var(--yellow-orange);
+        }
+
+        .task .text { flex: 1; font-size: 0.8rem; }
+        .task .due { font-size: 0.65rem; color: #999; }
+
+        /* Full Window View */
+        .full-view {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .full-view.active {
+            display: flex;
+        }
+
+        .full-view .window {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .full-view .window-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        /* Dashboard Grid View - 4 columns + HALL */
+        .dashboard-view {
+            display: none;
+            flex: 1;
+            gap: 12px;
+            min-height: 0;
+        }
+
+        .dashboard-view.active {
+            display: flex;
+        }
+
+        .dashboard-view > .window {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .dashboard-view > .stacked-column {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stacked-column .window {
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* HALL Assistant Window */
+        .window.hall-assistant {
+            flex: 0 0 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: white;
+            overflow: hidden;
+        }
+
+        .hall-assistant-logo {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            margin-bottom: 12px;
+        }
+
+        .hall-assistant-logo .ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            border-top-color: var(--red);
+            border-right-color: var(--orange);
+            border-bottom-color: var(--yellow);
+            border-left-color: var(--red-orange);
+            animation: spin 8s linear infinite;
+        }
+
+        .hall-assistant-logo .wheel {
+            position: absolute;
+            top: 4px; left: 4px;
+            width: calc(100% - 8px);
+            height: calc(100% - 8px);
+            border-radius: 50%;
+            background: conic-gradient(
+                from -30deg,
+                var(--red) 0deg 60deg,
+                var(--red-orange) 60deg 120deg,
+                var(--orange) 120deg 180deg,
+                var(--orange-light) 180deg 240deg,
+                var(--yellow-orange) 240deg 300deg,
+                var(--yellow) 300deg 360deg
+            );
+        }
+
+        .hall-assistant-logo .center {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Righteous', cursive;
+            font-size: 0.3rem;
+            color: var(--red-orange);
+            z-index: 2;
+        }
+
+        .hall-spacer {
+            flex: 1;
+        }
+
+        .hall-input-area {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            width: 100%;
+            margin-bottom: 10px;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        .hall-input {
+            flex: 1;
+            min-width: 0;
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-family: inherit;
+            font-size: 0.75rem;
+            outline: none;
+            box-sizing: border-box;
+        }
+
+        .hall-input:focus {
+            border-color: var(--orange);
+        }
+
+        .hall-mic {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            background: var(--orange);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .hall-mic:hover {
+            background: var(--red-orange);
+        }
+
+        .hall-mic svg {
+            width: 14px;
+            height: 14px;
+            fill: white;
+        }
+
+        .hall-suggestions-bottom {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .hall-suggestions-bottom .suggestion {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: left;
+        }
+
+        .hall-suggestions-bottom .suggestion:hover {
+            background: var(--orange);
+            color: white;
+            border-color: var(--orange);
+        }
+
+        /* Calendar badge special style */
+        .badge.calendar-badge {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+            padding: 4px 8px;
+        }
+
+        .badge.calendar-badge small {
+            font-size: 0.5rem;
+            font-weight: 400;
+        }
+
+        /* Task done style */
+        .task .text.done {
+            text-decoration: line-through;
+            color: #999;
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .top-row, .middle-row { flex-direction: column; }
+            .main { padding: 8px; gap: 8px; }
+            .suggestions { display: none; }
+            .menu-item span { display: none; }
+            .menu-item { padding: 6px 8px; }
+        }
+
+        @media (max-width: 600px) {
+            .chat-input { width: 140px; font-size: 0.8rem; }
+            .menu-item .badge { display: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- Top Bar -->
+        <header class="top-bar">
+            <div class="top-bar-left">
+                <div class="hall-logo-container">
+                    <div class="hall-wheel" title="HALL Menu">
+                        <div class="ring"></div>
+                        <svg viewBox="0 0 100 100">
+                            <!-- Email - Top (red) -->
+                            <path class="segment" data-app="email" d="M50 50 L50 10 A40 40 0 0 1 84.64 30 Z" fill="#D32F2F"/>
+                            <!-- WhatsApp - Top Right (red-orange) -->
+                            <path class="segment" data-app="whatsapp" d="M50 50 L84.64 30 A40 40 0 0 1 84.64 70 Z" fill="#E64A19"/>
+                            <!-- SMS - Bottom Right (orange) -->
+                            <path class="segment" data-app="sms" d="M50 50 L84.64 70 A40 40 0 0 1 50 90 Z" fill="#F57C00"/>
+                            <!-- Calendar - Bottom (orange-light) -->
+                            <path class="segment" data-app="calendar" d="M50 50 L50 90 A40 40 0 0 1 15.36 70 Z" fill="#FF9800"/>
+                            <!-- Tasks - Bottom Left (yellow-orange) -->
+                            <path class="segment" data-app="tasks" d="M50 50 L15.36 70 A40 40 0 0 1 15.36 30 Z" fill="#FFA726"/>
+                            <!-- Contacts - Top Left (yellow) -->
+                            <path class="segment inactive" data-app="contacts" d="M50 50 L15.36 30 A40 40 0 0 1 50 10 Z" fill="#FFB300"/>
+                        </svg>
+                        <div class="center-circle">HALL</div>
+                    </div>
+                </div>
+
+                <nav class="app-menu">
+                    <div class="menu-item dashboard active">
+                        <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+                        <span>Dashboard</span>
+                    </div>
+                    <div class="menu-item email active">
+                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                        <span>Email</span>
+                        <span class="badge">12</span>
+                    </div>
+                    <div class="menu-item whatsapp active">
+                        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg>
+                        <span>WhatsApp</span>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="menu-item sms active">
+                        <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/></svg>
+                        <span>SMS</span>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="menu-item calendar active">
+                        <svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg>
+                        <span>Calendar</span>
+                    </div>
+                    <div class="menu-item tasks active">
+                        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                        <span>Tasks</span>
+                        <span class="badge">8</span>
+                    </div>
+                    <div class="menu-item contacts inactive">
+                        <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+                        <span>Contacts</span>
+                    </div>
+                </nav>
+            </div>
+
+            <div class="top-bar-right">
+                <div class="accounts">
+                    <button class="account-btn-all">ALL</button>
+                    <div class="account active" title="EC4">EC4</div>
+                    <div class="account active" title="UP8">UP8</div>
+                    <div class="account inactive" title="XSOLUTION">XSOLUTION</div>
+                    <div class="add-account" title="Add Account">
+                        <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+                    </div>
+                    <div class="settings-btn" title="Settings">
+                        <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Dashboard View (4-column grid + HALL) -->
+            <div class="dashboard-view active">
+                <!-- Email -->
+                <div class="window email">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+                        <h3>Email</h3>
+                        <span class="badge">12</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">SM</div><div class="content"><div class="title">Sarah Miller</div><div class="subtitle">Re: Project update for Q4 plan...</div></div><div class="meta"><span class="time">2m</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">JW</div><div class="content"><div class="title">James Wilson</div><div class="subtitle">Meeting reschedule request</div></div><div class="meta"><span class="time">1h</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">AM</div><div class="content"><div class="title">Amazon</div><div class="subtitle">Your order has shipped!</div></div><div class="meta"><span class="time">3h</span></div></div>
+                        <div class="list-item"><div class="avatar">GH</div><div class="content"><div class="title">GitHub</div><div class="subtitle">New pull request in hall-project</div></div><div class="meta"><span class="time">5h</span></div></div>
+                        <div class="list-item"><div class="avatar">LI</div><div class="content"><div class="title">LinkedIn</div><div class="subtitle">You have 3 new connection req...</div></div><div class="meta"><span class="time">1d</span></div></div>
+                    </div>
+                </div>
+
+                <!-- WhatsApp -->
+                <div class="window whatsapp">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg></div>
+                        <h3>WhatsApp</h3>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">TG</div><div class="content"><div class="title">Team Group</div><div class="subtitle">Mike: See you at the meeting!</div></div><div class="meta"><span class="time">15m</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">MJ</div><div class="content"><div class="title">Mom</div><div class="subtitle">Don't forget dinner on Sunday</div></div><div class="meta"><span class="time">2h</span></div></div>
+                        <div class="list-item"><div class="avatar">DR</div><div class="content"><div class="title">David R.</div><div class="subtitle">Thanks for the files!</div></div><div class="meta"><span class="time">1d</span></div></div>
+                        <div class="list-item"><div class="avatar">AN</div><div class="content"><div class="title">Anna</div><div class="subtitle">Are you coming to the party?</div></div><div class="meta"><span class="time">2d</span></div></div>
+                    </div>
+                </div>
+
+                <!-- SMS -->
+                <div class="window sms">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/></svg></div>
+                        <h3>SMS</h3>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">BK</div><div class="content"><div class="title">Bank Alert</div><div class="subtitle">Transaction...</div></div><div class="meta"><span class="time">30m</span></div></div>
+                        <div class="list-item"><div class="avatar">FD</div><div class="content"><div class="title">FedEx</div><div class="subtitle">Out for delive...</div></div><div class="meta"><span class="time">2h</span></div></div>
+                    </div>
+                </div>
+
+                <!-- Calendar + Tasks Column -->
+                <div class="stacked-column">
+                    <!-- Calendar -->
+                    <div class="window calendar">
+                        <div class="window-header">
+                            <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg></div>
+                            <h3>Calendar</h3>
+                            <span class="badge calendar-badge">2<small>today</small></span>
+                        </div>
+                        <div class="window-content">
+                            <div class="event"><div class="time">9:00 AM</div><div class="title">Team Standup</div></div>
+                            <div class="event"><div class="time">2:00 PM</div><div class="title">Client Call</div></div>
+                        </div>
+                    </div>
+
+                    <!-- Tasks -->
+                    <div class="window tasks">
+                        <div class="window-header">
+                            <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+                            <h3>Tasks</h3>
+                            <span class="badge">8</span>
+                        </div>
+                        <div class="window-content">
+                            <div class="task"><input type="checkbox"><span class="text">Review mockups</span><span class="due">Today</span></div>
+                            <div class="task"><input type="checkbox"><span class="text">Send invoice</span><span class="due">Today</span></div>
+                            <div class="task"><input type="checkbox" checked><span class="text done">Book flights</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HALL AI Assistant Window -->
+                <div class="window hall-assistant">
+                    <div class="hall-assistant-logo">
+                        <div class="ring"></div>
+                        <div class="wheel"></div>
+                        <div class="center">HALL</div>
+                    </div>
+                    <div class="hall-spacer"></div>
+                    <div class="hall-input-area">
+                        <input type="text" class="hall-input" placeholder="Type a message...">
+                        <button class="hall-mic" title="Voice input">
+                            <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
+                        </button>
+                    </div>
+                    <div class="hall-suggestions-bottom">
+                        <button class="suggestion">Send email to Sarah</button>
+                        <button class="suggestion">What's on my calendar?</button>
+                        <button class="suggestion">Create a task</button>
+                        <button class="suggestion">Unread messages</button>
+                    </div>
+                </div>
+            </div>
+            <!-- End Dashboard View -->
+
+            <!-- Full Window Views -->
+            <div class="full-view email-view" data-app="email">
+                <div class="window email" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg></div>
+                        <h3>Email</h3>
+                        <span class="badge">12</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">SM</div><div class="content"><div class="title">Sarah Miller</div><div class="subtitle">Re: Project update for Q4 planning</div></div><div class="meta"><span class="time">2m</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">JW</div><div class="content"><div class="title">James Wilson</div><div class="subtitle">Meeting reschedule request</div></div><div class="meta"><span class="time">1h</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">AM</div><div class="content"><div class="title">Amazon</div><div class="subtitle">Your order has shipped!</div></div><div class="meta"><span class="time">3h</span></div></div>
+                        <div class="list-item"><div class="avatar">GH</div><div class="content"><div class="title">GitHub</div><div class="subtitle">New pull request in hall-project</div></div><div class="meta"><span class="time">5h</span></div></div>
+                        <div class="list-item"><div class="avatar">LI</div><div class="content"><div class="title">LinkedIn</div><div class="subtitle">You have 3 new connection requests</div></div><div class="meta"><span class="time">1d</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-view whatsapp-view" data-app="whatsapp">
+                <div class="window whatsapp" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/></svg></div>
+                        <h3>WhatsApp</h3>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">TG</div><div class="content"><div class="title">Team Group</div><div class="subtitle">Mike: See you at the meeting!</div></div><div class="meta"><span class="time">15m</span><div class="unread"></div></div></div>
+                        <div class="list-item"><div class="avatar">MJ</div><div class="content"><div class="title">Mom</div><div class="subtitle">Don't forget dinner on Sunday</div></div><div class="meta"><span class="time">2h</span></div></div>
+                        <div class="list-item"><div class="avatar">DR</div><div class="content"><div class="title">David R.</div><div class="subtitle">Thanks for the files!</div></div><div class="meta"><span class="time">1d</span></div></div>
+                        <div class="list-item"><div class="avatar">AN</div><div class="content"><div class="title">Anna</div><div class="subtitle">Are you coming to the party?</div></div><div class="meta"><span class="time">2d</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-view sms-view" data-app="sms">
+                <div class="window sms" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM9 11H7V9h2v2zm4 0h-2V9h2v2zm4 0h-2V9h2v2z"/></svg></div>
+                        <h3>SMS</h3>
+                        <span class="badge">3</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">BK</div><div class="content"><div class="title">Bank Alert</div><div class="subtitle">Transaction $125.00</div></div><div class="meta"><span class="time">30m</span></div></div>
+                        <div class="list-item"><div class="avatar">FD</div><div class="content"><div class="title">FedEx</div><div class="subtitle">Out for delivery</div></div><div class="meta"><span class="time">2h</span></div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-view calendar-view" data-app="calendar">
+                <div class="window calendar" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/></svg></div>
+                        <h3>Calendar</h3>
+                        <span class="badge">2 today</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="event"><div class="time">9:00 AM</div><div class="title">Team Standup</div></div>
+                        <div class="event"><div class="time">2:00 PM</div><div class="title">Client Call</div></div>
+                        <div class="event"><div class="time">4:00 PM</div><div class="title">Project Review</div></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-view tasks-view" data-app="tasks">
+                <div class="window tasks" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon"><svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg></div>
+                        <h3>Tasks</h3>
+                        <span class="badge">8</span>
+                    </div>
+                    <div class="window-content">
+                        <div class="task"><input type="checkbox"><span class="text">Review mockups</span><span class="due">Today</span></div>
+                        <div class="task"><input type="checkbox"><span class="text">Send invoice</span><span class="due">Today</span></div>
+                        <div class="task"><input type="checkbox"><span class="text">Update documentation</span><span class="due">Tomorrow</span></div>
+                        <div class="task"><input type="checkbox" checked><span class="text" style="text-decoration:line-through;color:#999">Book flights</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="full-view contacts-view" data-app="contacts">
+                <div class="window contacts" style="flex:1;">
+                    <div class="window-header">
+                        <div class="icon" style="background:var(--yellow);"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg></div>
+                        <h3>Contacts</h3>
+                    </div>
+                    <div class="window-content">
+                        <div class="list-item"><div class="avatar">SM</div><div class="content"><div class="title">Sarah Miller</div><div class="subtitle">sarah@example.com</div></div></div>
+                        <div class="list-item"><div class="avatar">JW</div><div class="content"><div class="title">James Wilson</div><div class="subtitle">james@company.com</div></div></div>
+                        <div class="list-item"><div class="avatar">DR</div><div class="content"><div class="title">David R.</div><div class="subtitle">david@email.com</div></div></div>
+                        <div class="list-item"><div class="avatar">AN</div><div class="content"><div class="title">Anna</div><div class="subtitle">anna@work.com</div></div></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Switch views - only for dashboard menu item and wheel segments
+        function switchView(appName) {
+            // Hide all views
+            document.querySelector('.dashboard-view').classList.remove('active');
+            document.querySelectorAll('.full-view').forEach(view => view.classList.remove('active'));
+
+            // Show target view
+            if (appName === 'dashboard') {
+                document.querySelector('.dashboard-view').classList.add('active');
+            } else {
+                const fullView = document.querySelector(`.full-view.${appName}-view`);
+                if (fullView) fullView.classList.add('active');
+            }
+        }
+
+        // Menu item clicks - toggle green/red (except dashboard which navigates)
+        document.querySelectorAll('.menu-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const type = Array.from(item.classList).find(c => ['dashboard','email','whatsapp','sms','calendar','tasks','contacts'].includes(c));
+                
+                if (type === 'dashboard') {
+                    // Dashboard navigates to dashboard view
+                    switchView('dashboard');
+                } else {
+                    // Other items toggle active/inactive
+                    item.classList.toggle('active');
+                    item.classList.toggle('inactive');
+                    
+                    // Sync with wheel segment
+                    const segment = document.querySelector(`.hall-wheel .segment[data-app="${type}"]`);
+                    if (segment) {
+                        segment.classList.toggle('inactive');
                     }
-                    * { margin: 0; padding: 0; box-sizing: border-box; }
-                    body {
-                                    font-family: 'Outfit', sans-serif;
-                                    background-color: var(--bg-light);
-                                    color: var(--text-dark);
-                                    min-height: 100vh;
-                    }
-                    .dashboard {
-                                    display: flex;
-                                    flex-direction: column;
-                                    height: 100vh;
-                                    padding: 20px;
-                                    gap: 20px;
-                    }
-                    /* Header with Circular Menu */
-                    .header {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 20px;
-                    }
-                    /* Circular HALL Menu */
-                    .hall-menu-container {
-                                    position: relative;
-                    }
-                    .hall-menu {
-                                    width: 80px;
-                                    height: 80px;
-                                    border-radius: 50%;
-                                    background: conic-gradient(from 0deg, var(--yellow) 0deg, var(--yellow-orange) 60deg, var(--orange) 120deg, var(--red-orange) 180deg, var(--red) 240deg, var(--red-dark) 300deg, var(--yellow) 360deg);
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    cursor: pointer;
-                                    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-                                    position: relative;
-                                    z-index: 100;
-                    }
-                    .hall-menu-inner {
-                                    width: 50px;
-                                    height: 50px;
-                                    border-radius: 50%;
-                                    background: linear-gradient(135deg, var(--orange) 0%, var(--red-orange) 100%);
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-weight: 700;
-                                    color: white;
-                                    font-size: 14px;
-                    }
-                    /* Radial Menu Items */
-                    .menu-items {
-                                    position: absolute;
-                                    top: 50%;
-                                    left: 50%;
-                                    transform: translate(-50%, -50%);
-                                    pointer-events: none;
-                                    opacity: 0;
-                                    transition: opacity 0.3s;
-                    }
-                    .hall-menu-container:hover .menu-items,
-                    .hall-menu-container.active .menu-items {
-                                    opacity: 1;
-                                    pointer-events: auto;
-                    }
-                    .menu-item {
-                                    position: absolute;
-                                    width: 45px;
-                                    height: 45px;
-                                    border-radius: 50%;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-size: 20px;
-                                    cursor: pointer;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-                                    transition: transform 0.2s;
-                    }
-                    .menu-item:hover { transform: scale(1.15); }
-                    .menu-item.email { background: var(--red); top: -60px; left: -22px; }
-                    .menu-item.whatsapp { background: var(--orange); top: -30px; left: 40px; }
-                    .menu-item.sms { background: var(--yellow-orange); top: 30px; left: 40px; }
-                    .menu-item.calendar { background: var(--orange-light); top: 60px; left: -22px; }
-                    .menu-item.tasks { background: var(--yellow); top: 30px; left: -85px; color: #333; }
-                    .menu-item.contacts { background: var(--red-orange); top: -30px; left: -85px; }
-                    .greeting {
-                                    flex: 1;
-                    }
-                    .greeting h1 {
-                                    font-size: 26px;
-                                    font-weight: 600;
-                                    margin-bottom: 4px;
-                    }
-                    .greeting p {
-                                    font-size: 14px;
-                                    color: var(--text-light);
-                    }
-                    .search-box {
-                                    padding: 12px 20px;
-                                    border-radius: 25px;
-                                    border: 1px solid var(--border);
-                                    background: white;
-                                    font-size: 14px;
-                                    width: 220px;
-                    }
-                    /* Content Grid - Email/WhatsApp full height, SMS/Calendar/Tasks at bottom */
-                    .content {
-                                    flex: 1;
-                                    display: grid;
-                                    grid-template-columns: 1fr 1fr;
-            grid-template-rows: 2fr 2fr 1fr;                                    gap: 20px;
-                                    min-height: 0;
-                    }
-                    .window {
-                                    background: white;
-                                    border-radius: 16px;
-                                    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-                                    display: flex;
-                                    flex-direction: column;
-                                    overflow: hidden;
-                    }
-                    .window-header {
-                                    padding: 16px 20px;
-                                    border-bottom: 1px solid var(--border);
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: space-between;
-                    }
-                    .window-title {
-                                    display: flex;
-                                    align-items: center;
-                                    gap: 10px;
-                                    font-weight: 600;
-                                    font-size: 15px;
-                    }
-                    .window-title span:first-child { font-size: 20px; }
-                    .badge {
-                                    background: var(--orange);
-                                    color: white;
-                                    font-size: 12px;
-                                    font-weight: 600;
-                                    padding: 4px 10px;
-                                    border-radius: 12px;
-                    }
-                    .window-content {
-                                    flex: 1;
-                                    overflow-y: auto;
-                                    padding: 8px;
-                    }
-                    .item {
-                                    display: flex;
-                                    align-items: center;
-                                    padding: 12px;
-                                    border-radius: 10px;
-                                    cursor: pointer;
-                    }
-                    .item:hover { background: var(--bg-light); }
-                    .avatar {
-                                    width: 40px;
-                                    height: 40px;
-                                    border-radius: 50%;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    color: white;
-                                    font-weight: 600;
-                                    font-size: 14px;
-                                    margin-right: 12px;
-                                    flex-shrink: 0;
-                    }
-                    .item-info { flex: 1; min-width: 0; }
-                    .item-name { font-weight: 500; font-size: 14px; margin-bottom: 2px; }
-                    .item-text { font-size: 13px; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-                    .item-time { font-size: 12px; color: var(--text-light); margin-left: 10px; }
-                    .event-time { font-weight: 600; font-size: 13px; color: var(--red); }
-                    .event-title { font-size: 14px; margin-top: 2px; }
-                    /* Grid Positions */
-                    .email-window { grid-row: 1 / 3; }
-                    .whatsapp-window { grid-row: 1 / 3; }
-        .sms-window { grid-column: 1; grid-row: 3; }                    .calendar-window { grid-column: 2; }
-        .calendar-window { grid-column: 2; grid-row: 3; }                    .fab {
-                                    position: fixed;
-                                    bottom: 25px;
-                                    right: 25px;
-                                    width: 56px;
-                                    height: 56px;
-                                    border-radius: 50%;
-                                    background: linear-gradient(135deg, var(--red-orange), var(--orange));
-                                    color: white;
-                                    display: flex;
-                                    align-items: center;
-                                    justify-content: center;
-                                    font-size: 28px;
-                                    cursor: pointer;
-                                    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-                    }
-                </style>
-    </head>
-    <body>
-            <div class="dashboard">
-                        <div class="header">
-                                        <div class="hall-menu-container">
-                                                            <div class="hall-menu">
-                                                                                    <div class="hall-menu-inner">HALL</div>div>
-                                                            </div>div>
-                                                            <div class="menu-items">
-                                                                                    <div class="menu-item email">✉️</div>div>
-                                                                                    <div class="menu-item whatsapp">💬</div>div>
-                                                                                    <div class="menu-item sms">📱</div>div>
-                                                                                    <div class="menu-item calendar">📅</div>div>
-                                                                                    <div class="menu-item tasks">✓</div>div>
-                                                                                    <div class="menu-item contacts">👤</div>div>
-                                                            </div>div>
-                                        </div>div>
-                                        <div class="greeting">
-                                                            <h1>Good morning, John</h1>
-                                                        <p>5 unread messages • 2 events today</p>
-                                        </div>div>
-                                    <input type="text" class="search-box" placeholder="🔍 Search contacts...">
-                        </div>div>
-                    <div class="content">
-                                <div class="window email-window">
-                                                <div class="window-header">
-                                                                    <div class="window-title"><span>✉️</span><span>Email</span></div>div>
-                                                                    <div class="badge">12</div>div>
-                                                </div>div>
-                                                <div class="window-content">
-                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">SM</div>div><div class="item-info"><div class="item-name">Sarah Miller</div>div><div class="item-text">Re: Project update for Q4</div>div></div>div><div class="item-time">2m</div>div></div>div>
-                                                                    <div class="item"><div class="avatar" style="background:var(--red)">JW</div>div><div class="item-info"><div class="item-name">James Wilson</div>div><div class="item-text">Meeting reschedule request</div>div></div>div><div class="item-time">1h</div>div></div>div>
-                                                                    <div class="item"><div class="avatar" style="background:var(--yellow-orange)">AM</div>div><div class="item-info"><div class="item-name">Amazon</div>div><div class="item-text">Your order has shipped!</div>div></div>div><div class="item-time">3h</div>div></div>div>
-                                                </div>div>
-                                </div>div>
-                                <div class="window whatsapp-window">
-                                                <div class="window-header">
-                                                                    <div class="window-title"><span>💬</span><span>WhatsApp</span></div>div>
-                                                                    <div class="badge">5</div>div>
-                                                </div>div>
-                                                <div class="window-content">
-                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">TG</div>div><div class="item-info"><div class="item-name">Team Group</div>div><div class="item-text">Mike: See you at the meeting!</div>div></div>div><div class="item-time">15m</div>div></div>div>
-                                                                    <div class="item"><div class="avatar" style="background:var(--red)">MJ</div>div><div class="item-info"><div class="item-name">Mom</div>div><div class="item-text">Don't forget dinner on Sunday</div>div></div>div><div class="item-time">2h</div>div></div>div>
-                                                                    <div class="item"><div class="avatar" style="background:var(--yellow-orange)">DR</div>div><div class="item-info"><div class="item-name">David R.</div>div><div class="item-text">Thanks for the files!</div>div></div>div><div class="item-time">1d</div>div></div>div>
-                                                </div>div>
-                                </div>div>
-                                <div class="window sms-window">
-                                                <div class="window-header">
-                                                                    <div class="window-title"><span>📱</span><span>SMS</span></div>div>
-                                                                    <div class="badge">3</div>div>
-                                                </div>div>
-                                                <div class="window-content">
-                                                                    <div class="item"><div class="avatar" style="background:var(--red)">BK</div>div><div class="item-info"><div class="item-name">Bank Alert</div>div><div class="item-text">Transaction completed</div>div></div>div><div class="item-time">30m</div>div></div>div>
-                                                                    <div class="item"><div class="avatar" style="background:var(--orange)">FD</div>div><div class="item-info"><div class="item-name">FedEx</div>div><div class="item-text">Package out for delivery</div>div></div>div><div class="item-time">2h</div>div></div>div>
-                                                </div>div>
-                                </div>div>
-                                <div class="window calendar-window">
-                                                <div class="window-header">
-                                                                    <div class="window-title"><span>📅</span><span>Calendar</span></div>div>
-                                                                    <div class="badge">2 today</div>div>
-                                                </div>div>
-                                                <div class="window-content">
-                                                                    <div class="item"><div class="item-info"><div class="event-time">9:00 AM</div>div><div class="event-title">Team Standup</div>div></div>div></div>div>
-                                                                    <div class="item"><div class="item-info"><div class="event-time">2:00 PM</div>div><div class="event-title">Client Call - Q4 Review</div>div></div>div></div>div>
-                                                </div>div>
-                                </div>div>
-                    </div>div>
-            </div>div>
-        <div class="fab">+</div>div>
-    </body>
-</html>html></span></span></p></h1>
-    </body>
-        </style></title>
-    </head>
+                }
+            });
+        });
+
+        // Wheel segment clicks - navigate to full view
+        document.querySelectorAll('.hall-wheel .segment').forEach(segment => {
+            segment.addEventListener('click', () => {
+                const type = segment.getAttribute('data-app');
+                if (type) switchView(type);
+            });
+        });
+
+        // Toggle accounts (multi-select green/red)
+        document.querySelectorAll('.account').forEach(acc => {
+            acc.addEventListener('click', () => {
+                acc.classList.toggle('active');
+                acc.classList.toggle('inactive');
+                updateAllButton();
+            });
+        });
+
+        // Accounts ALL button
+        document.querySelector('.account-btn-all').addEventListener('click', function() {
+            const allActive = this.classList.contains('active');
+            document.querySelectorAll('.account').forEach(acc => {
+                if (allActive) {
+                    acc.classList.remove('active');
+                    acc.classList.add('inactive');
+                } else {
+                    acc.classList.add('active');
+                    acc.classList.remove('inactive');
+                }
+            });
+            this.classList.toggle('active');
+        });
+
+        function updateAllButton() {
+            const accounts = document.querySelectorAll('.account');
+            const allActive = Array.from(accounts).every(acc => acc.classList.contains('active'));
+            const allBtn = document.querySelector('.account-btn-all');
+            if (allActive) {
+                allBtn.classList.add('active');
+            } else {
+                allBtn.classList.remove('active');
+            }
+        }
+
+        // Suggestion click - fill the input field
+        document.querySelectorAll('.hall-suggestions-bottom .suggestion').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const input = document.querySelector('.hall-input');
+                if (input) {
+                    input.value = this.textContent;
+                    input.focus();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
