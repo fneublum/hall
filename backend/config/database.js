@@ -1,87 +1,186 @@
-const Database = require('better-sqlite3');
-const path = require('path');
+const { createClient } = require('@supabase/supabase-js');
 
-const db = new Database(path.join(__dirname, '../data/hall.db'));
+// Initialize Supabase client
+const supabaseUrl = process.env.SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Initialize database tables
-db.exec(`
-  CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
-    email TEXT UNIQUE NOT NULL,
-    name TEXT,
-    password_hash TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
+if (!supabaseUrl || !supabaseKey) {
+    throw new Error('Missing Supabase environment variables');
+}
 
-  CREATE TABLE IF NOT EXISTS accounts (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    name TEXT NOT NULL,
-    type TEXT NOT NULL,
-    provider TEXT NOT NULL,
-    access_token TEXT,
-    refresh_token TEXT,
-    token_expiry DATETIME,
-    is_active INTEGER DEFAULT 1,
-    color TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-  );
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-  CREATE TABLE IF NOT EXISTS messages (
-    id TEXT PRIMARY KEY,
-    account_id TEXT NOT NULL,
-    type TEXT NOT NULL,
-    from_address TEXT,
-    to_address TEXT,
-    subject TEXT,
-    body TEXT,
-    is_read INTEGER DEFAULT 0,
-    timestamp DATETIME,
-    external_id TEXT,
-    FOREIGN KEY (account_id) REFERENCES accounts(id)
-  );
+// Database wrapper for compatibility with existing code
+const db = {
+    supabase,
 
-  CREATE TABLE IF NOT EXISTS calendar_events (
-    id TEXT PRIMARY KEY,
-    account_id TEXT NOT NULL,
-    title TEXT NOT NULL,
-    description TEXT,
-    start_time DATETIME,
-    end_time DATETIME,
-    location TEXT,
-    external_id TEXT,
-    FOREIGN KEY (account_id) REFERENCES accounts(id)
-  );
+    // Helper to run raw SQL (for complex queries)
+    async query(sql, params = []) {
+          const { data, error } = await supabase.rpc('exec_sql', { query: sql, params });
+          if (error) throw error;
+          return data;
+    },
 
-  CREATE TABLE IF NOT EXISTS tasks (
-    id TEXT PRIMARY KEY,
-    account_id TEXT NOT NULL,
-    title TEXT NOT NULL,
-    notes TEXT,
-    due_date DATETIME,
-    is_completed INTEGER DEFAULT 0,
-    external_id TEXT,
-    FOREIGN KEY (account_id) REFERENCES accounts(id)
-  );
+    // Users table operations
+    users: {
+          async findById(id) {
+                  const { data, error } = await supabase.from('users').select('*').eq('id', id).single();
+                  if (error && error.code !== 'PGRST116') throw error;
+                  return data;
+          },
+          async findByEmail(email) {
+                  const { data, error } = await supabase.from('users').select('*').eq('email', email).single();
+                  if (error && error.code !== 'PGRST116') throw error;
+                  return data;
+          },
+          async create(user) {
+                  const { data, error } = await supabase.from('users').insert(user).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async update(id, updates) {
+                  const { data, error } = await supabase.from('users').update(updates).eq('id', id).select().single();
+                  if (error) throw error;
+                  return data;
+          }
+    },
 
-  CREATE TABLE IF NOT EXISTS contacts (
-    id TEXT PRIMARY KEY,
-    account_id TEXT NOT NULL,
-    name TEXT NOT NULL,
-    email TEXT,
-    phone TEXT,
-    external_id TEXT,
-    FOREIGN KEY (account_id) REFERENCES accounts(id)
-  );
+    // Accounts table operations
+    accounts: {
+          async findById(id) {
+                  const { data, error } = await supabase.from('accounts').select('*').eq('id', id).single();
+                  if (error && error.code !== 'PGRST116') throw error;
+                  return data;
+          },
+          async findByUserId(userId) {
+                  const { data, error } = await supabase.from('accounts').select('*').eq('user_id', userId);
+                  if (error) throw error;
+                  return data || [];
+          },
+          async create(account) {
+                  const { data, error } = await supabase.from('accounts').insert(account).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async update(id, updates) {
+                  const { data, error } = await supabase.from('accounts').update(updates).eq('id', id).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async delete(id) {
+                  const { error } = await supabase.from('accounts').delete().eq('id', id);
+                  if (error) throw error;
+          }
+    },
 
-  CREATE TABLE IF NOT EXISTS sessions (
-    id TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    token TEXT NOT NULL,
-    expires_at DATETIME,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-  );
-`);
+    // Messages table operations
+    messages: {
+          async findByAccountId(accountId, limit = 50) {
+                  const { data, error } = await supabase.from('messages').select('*').eq('account_id', accountId).order('timestamp', { ascending: false }).limit(limit);
+                  if (error) throw error;
+                  return data || [];
+          },
+          async create(message) {
+                  const { data, error } = await supabase.from('messages').insert(message).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async markAsRead(id) {
+                  const { error } = await supabase.from('messages').update({ is_read: 1 }).eq('id', id);
+                  if (error) throw error;
+          }
+    },
+
+    // Calendar events table operations
+    calendar_events: {
+          async findByAccountId(accountId) {
+                  const { data, error } = await supabase.from('calendar_events').select('*').eq('account_id', accountId).order('start_time', { ascending: true });
+                  if (error) throw error;
+                  return data || [];
+          },
+          async create(event) {
+                  const { data, error } = await supabase.from('calendar_events').insert(event).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async update(id, updates) {
+                  const { data, error } = await supabase.from('calendar_events').update(updates).eq('id', id).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async delete(id) {
+                  const { error } = await supabase.from('calendar_events').delete().eq('id', id);
+                  if (error) throw error;
+          }
+    },
+
+    // Tasks table operations
+    tasks: {
+          async findByAccountId(accountId) {
+                  const { data, error } = await supabase.from('tasks').select('*').eq('account_id', accountId).order('due_date', { ascending: true });
+                  if (error) throw error;
+                  return data || [];
+          },
+          async create(task) {
+                  const { data, error } = await supabase.from('tasks').insert(task).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async update(id, updates) {
+                  const { data, error } = await supabase.from('tasks').update(updates).eq('id', id).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async delete(id) {
+                  const { error } = await supabase.from('tasks').delete().eq('id', id);
+                  if (error) throw error;
+          }
+    },
+
+    // Contacts table operations
+    contacts: {
+          async findByAccountId(accountId) {
+                  const { data, error } = await supabase.from('contacts').select('*').eq('account_id', accountId).order('name', { ascending: true });
+                  if (error) throw error;
+                  return data || [];
+          },
+          async create(contact) {
+                  const { data, error } = await supabase.from('contacts').insert(contact).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async update(id, updates) {
+                  const { data, error } = await supabase.from('contacts').update(updates).eq('id', id).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async delete(id) {
+                  const { error } = await supabase.from('contacts').delete().eq('id', id);
+                  if (error) throw error;
+          }
+    },
+
+    // Sessions table operations
+    sessions: {
+          async findByToken(token) {
+                  const { data, error } = await supabase.from('sessions').select('*').eq('token', token).single();
+                  if (error && error.code !== 'PGRST116') throw error;
+                  return data;
+          },
+          async create(session) {
+                  const { data, error } = await supabase.from('sessions').insert(session).select().single();
+                  if (error) throw error;
+                  return data;
+          },
+          async delete(id) {
+                  const { error } = await supabase.from('sessions').delete().eq('id', id);
+                  if (error) throw error;
+          },
+          async deleteExpired() {
+                  const { error } = await supabase.from('sessions').delete().lt('expires_at', new Date().toISOString());
+                  if (error) throw error;
+          }
+    }
+};
 
 module.exports = db;
