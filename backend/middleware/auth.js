@@ -1,62 +1,63 @@
 const db = require('../config/database');
 
-function authMiddleware(req, res, next) {
-  const sessionToken = req.session?.token || req.headers['authorization']?.replace('Bearer ', '');
-  
-  if (!sessionToken) {
-    return res.status(401).json({ error: 'Authentication required' });
-  }
+async function authMiddleware(req, res, next) {
+    const sessionToken = req.session?.token || req.headers['authorization']?.replace('Bearer ', '');
 
-  try {
-    const session = db.prepare(`
-      SELECT s.*, u.id as user_id, u.email, u.name 
-      FROM sessions s 
-      JOIN users u ON s.user_id = u.id 
-      WHERE s.token = ? AND s.expires_at > datetime('now')
-    `).get(sessionToken);
-
-    if (!session) {
-      return res.status(401).json({ error: 'Invalid or expired session' });
+    if (!sessionToken) {
+          return res.status(401).json({ error: 'Authentication required' });
     }
 
-    req.user = {
-      id: session.user_id,
-      email: session.email,
-      name: session.name
-    };
-    
-    next();
-  } catch (error) {
-    console.error('Auth middleware error:', error);
-    res.status(500).json({ error: 'Authentication error' });
-  }
+    try {
+          // Get session from Supabase
+          const { data: session, error: sessionError } = await db.supabase
+            .from('sessions')
+            .select('*, users!inner(id, email, name)')
+            .eq('token', sessionToken)
+            .gt('expires_at', new Date().toISOString())
+            .single();
+
+          if (sessionError || !session) {
+                  return res.status(401).json({ error: 'Invalid or expired session' });
+          }
+
+          req.user = {
+                  id: session.users.id,
+                  email: session.users.email,
+                  name: session.users.name
+          };
+
+          next();
+    } catch (error) {
+          console.error('Auth middleware error:', error);
+          res.status(500).json({ error: 'Authentication error' });
+    }
 }
 
-function optionalAuth(req, res, next) {
-  const sessionToken = req.session?.token || req.headers['authorization']?.replace('Bearer ', '');
-  
-  if (sessionToken) {
-    try {
-      const session = db.prepare(`
-        SELECT s.*, u.id as user_id, u.email, u.name 
-        FROM sessions s 
-        JOIN users u ON s.user_id = u.id 
-        WHERE s.token = ? AND s.expires_at > datetime('now')
-      `).get(sessionToken);
+async function optionalAuth(req, res, next) {
+    const sessionToken = req.session?.token || req.headers['authorization']?.replace('Bearer ', '');
 
-      if (session) {
-        req.user = {
-          id: session.user_id,
-          email: session.email,
-          name: session.name
-        };
-      }
-    } catch (error) {
-      console.error('Optional auth error:', error);
+    if (sessionToken) {
+          try {
+                  const { data: session } = await db.supabase
+                    .from('sessions')
+                    .select('*, users!inner(id, email, name)')
+                    .eq('token', sessionToken)
+                    .gt('expires_at', new Date().toISOString())
+                    .single();
+
+                  if (session) {
+                            req.user = {
+                                        id: session.users.id,
+                                        email: session.users.email,
+                                        name: session.users.name
+                            };
+                  }
+          } catch (error) {
+                  console.error('Optional auth error:', error);
+          }
     }
-  }
-  
-  next();
+
+    next();
 }
 
 module.exports = { authMiddleware, optionalAuth };
